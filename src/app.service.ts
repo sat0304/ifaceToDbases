@@ -13,7 +13,7 @@ export class AppService {
 
   async postData(@Req() req, @Res() res) {
     const body = req.body;
-    RabbitMQClient.initialize();
+    // RabbitMQClient.initialize();
     // console.log(body);
     // console.log('This is service module working wtih status: 200');
     RabbitMQClient.produce(body);
