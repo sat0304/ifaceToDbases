@@ -7,7 +7,7 @@ export default class Producer {
 
     async produceMessages(data: any){
         // const uuid = randomUUID();
-        const uuid = 'conectionQueueOfMovies';
+        const uuid = 'conectionQueueOfPersones';
         console.log('the correlation ID is ...', uuid);
         this.channel.sendToQueue(
             config.rabbitMQ.queues.rpcQueue,

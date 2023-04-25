@@ -35,7 +35,7 @@ class RabbitMQClient {
 
             // const {queue: replyQueueName} = await this.consumerChannel.assertQueue('');
             const {queue: replyQueueName} = await this.consumerChannel.assertQueue(
-                'conectionQueueOfMovies',
+                'conectionQueueOfPersones',
                 // {exclusive: true}
                 );
 
