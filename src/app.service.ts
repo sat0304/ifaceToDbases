@@ -16,7 +16,8 @@ export class AppService {
     // RabbitMQClient.initialize();
     // console.log(body);
     // console.log('This is service module working wtih status: 200');
-    RabbitMQClient.produce(body);
-    return res.sendStatus(200);
+    const response = await RabbitMQClient.produce(body);
+    res.send({response});
+    // return res.sendStatus(200);
 }
 }

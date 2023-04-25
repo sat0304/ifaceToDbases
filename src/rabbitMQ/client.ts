@@ -2,6 +2,7 @@ import { Channel, Connection, connect } from "amqplib";
 import config from "../config";
 import Consumer from "./consumer";
 import Producer from "./producer";
+import { EventEmitter } from "events";
 
 class RabbitMQClient {
 
@@ -12,9 +13,13 @@ class RabbitMQClient {
 
     private consumer: Consumer;
     private producer: Producer;
+
     private connection: Connection;
+
     private consumerChannel: Channel;
     private producerChannel: Channel;
+
+    private  eventEmitter: EventEmitter;
 
     public static getInstance() {
         if (!this.instance) {
@@ -35,12 +40,20 @@ class RabbitMQClient {
 
             // const {queue: replyQueueName} = await this.consumerChannel.assertQueue('');
             const {queue: replyQueueName} = await this.consumerChannel.assertQueue(
-                'conectionQueueOfPersones',
+                config.rabbitMQ.queues.clientQueue,
                 // {exclusive: true}
                 );
 
-            this.consumer = new Consumer(this.consumerChannel, replyQueueName);
-            this.producer = new Producer(this.producerChannel, replyQueueName);
+            this.eventEmitter = new EventEmitter();
+            
+            this.consumer = new Consumer(
+                this.consumerChannel,
+                replyQueueName,
+                this.eventEmitter);
+            this.producer = new Producer(
+                this.producerChannel,
+                replyQueueName,
+                this.eventEmitter);
 
             this.consumer.consumeMessages();
 
