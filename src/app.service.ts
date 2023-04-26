@@ -16,11 +16,11 @@ export class AppService {
     // RabbitMQClient.initialize();
     // console.log(body.routingKey);
     switch (body.routingKey) {
-      case 'putPerson': 
+      case 'postPerson': 
         let resultPerson = await RabbitMQClient.producePerson(body);
         res.send({resultPerson});
       break;
-      case 'putMovie':
+      case 'postMovie':
         let resultMovie = await RabbitMQClient.produceMovie(body);
         res.send({resultMovie});
       break;
