@@ -12,8 +12,7 @@ export default class Consumer {
         this.channel.consume(
             this.replyQueueName,
             async (message: ConsumeMessage) => {
-            // console.log('the reply is ...',
-            // JSON.parse(message.content.toString()));
+
             this.eventEmitter.emit(
                 message.properties.correlationId.toString(),
                 message
@@ -25,3 +24,6 @@ export default class Consumer {
         );
     }
 }
+
+            // console.log('the reply is ...',
+            // JSON.parse(message.content.toString()));

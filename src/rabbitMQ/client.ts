@@ -11,15 +11,19 @@ class RabbitMQClient {
     private static instance: RabbitMQClient;
     private isInitialized = false;
 
-    private consumer: Consumer;
-    private producer: Producer;
+    private consumerPerson: Consumer;
+    private producerPerson: Producer;
+    private connectionPerson: Connection;
+    private consumerChannelPerson: Channel;
+    private producerChannelPerson: Channel;
+    private eventEmitterPerson: EventEmitter;
 
-    private connection: Connection;
-
-    private consumerChannel: Channel;
-    private producerChannel: Channel;
-
-    private  eventEmitter: EventEmitter;
+    private consumerMovie: Consumer;
+    private producerMovie: Producer;
+    private connectionMovie: Connection;
+    private consumerChannelMovie: Channel;
+    private producerChannelMovie: Channel;
+    private eventEmitterMovie: EventEmitter;
 
     public static getInstance() {
         if (!this.instance) {
@@ -33,29 +37,50 @@ class RabbitMQClient {
             return;
         }
         try {
-            this.connection = await connect(config.rabbitMQ.url);
+            this.connectionPerson = await connect(config.rabbitMQ.url);
+            this.connectionMovie = await connect(config.rabbitMQ.url);
 
-            this.producerChannel = await this.connection.createChannel();
-            this.consumerChannel = await this.connection.createChannel();
+            this.producerChannelPerson = await this.connectionPerson.createChannel();
+            this.consumerChannelPerson = await this.connectionPerson.createChannel();
 
-            // const {queue: replyQueueName} = await this.consumerChannel.assertQueue('');
-            const {queue: replyQueueName} = await this.consumerChannel.assertQueue(
-                config.rabbitMQ.queues.clientQueue,
-                // {exclusive: true}
+            this.producerChannelMovie = await this.connectionMovie.createChannel();
+            this.consumerChannelMovie = await this.connectionMovie.createChannel();
+
+            const {queue: replyQueueNamePerson} = await this.consumerChannelPerson.assertQueue(
+                config.rabbitMQ.queues.clientPersonQueue,
                 );
 
-            this.eventEmitter = new EventEmitter();
-            
-            this.consumer = new Consumer(
-                this.consumerChannel,
-                replyQueueName,
-                this.eventEmitter);
-            this.producer = new Producer(
-                this.producerChannel,
-                replyQueueName,
-                this.eventEmitter);
+            const {queue: replyQueueNameMovie} = await this.consumerChannelMovie.assertQueue(
+                config.rabbitMQ.queues.clientMovieQueue,
+                );
 
-            this.consumer.consumeMessages();
+            this.eventEmitterPerson = new EventEmitter();
+            this.eventEmitterMovie = new EventEmitter();
+
+            this.consumerPerson = new Consumer(
+                this.consumerChannelPerson,
+                replyQueueNamePerson,
+                this.eventEmitterPerson);
+            this.producerPerson = new Producer(
+                this.producerChannelPerson,
+                config.rabbitMQ.queues.clientPersonQueue,
+                config.rabbitMQ.queues.serverPersonQueue,
+                replyQueueNamePerson,
+                this.eventEmitterPerson);
+
+            this.consumerMovie = new Consumer(
+                this.consumerChannelMovie,
+                replyQueueNameMovie,
+                this.eventEmitterMovie);
+            this.producerMovie = new Producer(
+                this.producerChannelMovie,
+                config.rabbitMQ.queues.clientMovieQueue,
+                config.rabbitMQ.queues.serverMovieQueue,
+                replyQueueNameMovie,
+                this.eventEmitterMovie);
+
+            this.consumerPerson.consumeMessages();
+            this.consumerMovie.consumeMessages();
 
             this.isInitialized = true;
 
@@ -63,11 +88,17 @@ class RabbitMQClient {
             console.log('rabbitMQ error ...', error);
         }
     }
-    async produce(data: any) {
+    async producePerson(data: any) {
         if (!this.isInitialized) {
             await this.initialize();
         }
-        return await this.producer.produceMessages(data);
+        return await this.producerPerson.produceMessages(data);
+    }
+    async produceMovie(data: any) {
+        if (!this.isInitialized) {
+            await this.initialize();
+        }
+        return await this.producerMovie.produceMessages(data);
     }
 }
 

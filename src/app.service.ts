@@ -14,10 +14,23 @@ export class AppService {
   async postData(@Req() req, @Res() res) {
     const body = req.body;
     // RabbitMQClient.initialize();
-    // console.log(body);
+    // console.log(body.routingKey);
+    switch (body.routingKey) {
+      case 'putPerson': 
+        let resultPerson = await RabbitMQClient.producePerson(body);
+        res.send({resultPerson});
+      break;
+      case 'putMovie':
+        let resultMovie = await RabbitMQClient.produceMovie(body);
+        res.send({resultMovie});
+      break;
+      default: let result = 0;
+      res.send({result});
+      break;
+  }
     // console.log('This is service module working wtih status: 200');
-    const response = await RabbitMQClient.produce(body);
-    res.send({response});
+    
+    
     // return res.sendStatus(200);
 }
 }
