@@ -21,7 +21,7 @@ export default class Producer {
                 correlationId: uuid,
                 expiration: 8,
                 headers: {
-                    function: data.operation
+                    route: data.routingKey
                 }
             }
         );
