@@ -1,5 +1,4 @@
 import { Channel} from "amqplib";
-// import config from "../config";
 import { EventEmitter } from "events";
 
 
@@ -21,10 +20,12 @@ export default class Producer {
                 correlationId: uuid,
                 expiration: 8,
                 headers: {
-                    route: data.routingKey
+                    routingKey: data.routingKey,
                 }
             }
+            
         );
+        console.log('The sent routingKey is: ', data.routingKey);
         // wait for response
         return new Promise((resolve, reject)=> {
           this.eventEmitter.once(uuid, async (msg) => {
