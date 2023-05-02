@@ -25,6 +25,13 @@ class RabbitMQClient {
     private producerChannelMovie: Channel;
     private eventEmitterMovie: EventEmitter;
 
+    private consumerReview: Consumer;
+    private producerReview: Producer;
+    private connectionReview: Connection;
+    private consumerChannelReview: Channel;
+    private producerChannelReview: Channel;
+    private eventEmitterReview: EventEmitter;
+
     public static getInstance() {
         if (!this.instance) {
             this.instance = new RabbitMQClient();
@@ -39,12 +46,16 @@ class RabbitMQClient {
         try {
             this.connectionPerson = await connect(config.rabbitMQ.url);
             this.connectionMovie = await connect(config.rabbitMQ.url);
+            this.connectionReview = await connect(config.rabbitMQ.url);
 
             this.producerChannelPerson = await this.connectionPerson.createChannel();
             this.consumerChannelPerson = await this.connectionPerson.createChannel();
 
             this.producerChannelMovie = await this.connectionMovie.createChannel();
             this.consumerChannelMovie = await this.connectionMovie.createChannel();
+
+            this.producerChannelReview = await this.connectionReview.createChannel();
+            this.consumerChannelReview = await this.connectionReview.createChannel();
 
             const {queue: replyQueueNamePerson} = await this.consumerChannelPerson.assertQueue(
                 config.rabbitMQ.queues.clientPersonQueue,
@@ -54,8 +65,13 @@ class RabbitMQClient {
                 config.rabbitMQ.queues.clientMovieQueue,
                 );
 
+            const {queue: replyQueueNameReview} = await this.consumerChannelReview.assertQueue(
+                config.rabbitMQ.queues.clientReviewQueue,
+                );
+
             this.eventEmitterPerson = new EventEmitter();
             this.eventEmitterMovie = new EventEmitter();
+            this.eventEmitterReview = new EventEmitter();
 
             this.consumerPerson = new Consumer(
                 this.consumerChannelPerson,
@@ -79,8 +95,20 @@ class RabbitMQClient {
                 replyQueueNameMovie,
                 this.eventEmitterMovie);
 
+            this.consumerReview = new Consumer(
+                this.consumerChannelReview,
+                replyQueueNameReview,
+                this.eventEmitterReview);
+            this.producerReview = new Producer(
+                this.producerChannelReview,
+                config.rabbitMQ.queues.clientReviewQueue,
+                config.rabbitMQ.queues.serverReviewQueue,
+                replyQueueNameReview,
+                this.eventEmitterReview);
+
             this.consumerPerson.consumeMessages();
             this.consumerMovie.consumeMessages();
+            this.consumerReview.consumeMessages();
 
             this.isInitialized = true;
 
@@ -99,6 +127,13 @@ class RabbitMQClient {
             await this.initialize();
         }
         return await this.producerMovie.produceMessages(data);
+    }
+
+    async produceReview(data: any) {
+        if (!this.isInitialized) {
+            await this.initialize();
+        }
+        return await this.producerReview.produceMessages(data);
     }
 }
 
