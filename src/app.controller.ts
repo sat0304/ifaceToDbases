@@ -65,10 +65,11 @@ export class AppController {
     return RabbitMQClient.produceMovie(route);
   }
 
-  @Get('/persons/:kinopoiskId')
-  async getPersonsByKinopoiskId(@Param('kinopoiskId') kinopoiskId: any){
+  @Get('/persons/:personKinopoiskId')
+  async getPersonsByKinopoiskId(
+    @Param('personKinopoiskId') personKinopoiskId: number){
     let routeById = {
-      "routingKey": "getPerson", "kinopoiskId": kinopoiskId};
+      "routingKey": "getPerson", "personKinopoiskId": personKinopoiskId};
     return RabbitMQClient.produceMovie(routeById);
   }
 
