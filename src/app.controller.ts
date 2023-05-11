@@ -86,6 +86,20 @@ export class AppController {
     return RabbitMQClient.produceMovie(routeByProfession);
   }
 
+  @Get('/similars')
+  async getSimilars(){
+    let route = {"routingKey": "getSimilars"};
+    return RabbitMQClient.produceMovie(route);
+  }
+
+  @Get('/similars/:similarKinopoiskId')
+  async getSimilarsByKinopoiskId(
+    @Param('similarKinopoiskId') similarKinopoiskId: number){
+    let routeById = {
+      "routingKey": "getSimilar", "similarKinopoiskId": similarKinopoiskId};
+    return RabbitMQClient.produceMovie(routeById);
+  }
+
   @Post()
   async create(@Req() req: any, @Res() res: any) {
     return this.appService.postData(req, res);
