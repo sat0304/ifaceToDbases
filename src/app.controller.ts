@@ -100,6 +100,39 @@ export class AppController {
     return RabbitMQClient.produceMovie(routeById);
   }
 
+  @Get('/reviews')
+  async getReviews(){
+    let route = {"routingKey": "getReviews"};
+    return RabbitMQClient.produceReview(route);
+  }
+
+  @Get('/reviews/:reviewId')
+  async getReviewById(
+    @Param('reviewId') reviewId: number){
+    let routeById = {
+      "routingKey": "getReview", "reviewId": reviewId};
+    return RabbitMQClient.produceReview(routeById);
+  }
+
+  @Get('/reviews/:reviewId/comments')
+  async getComments(
+    @Param('reviewId') reviewId: number){
+    let route = {"routingKey": "getComments", "reviewId": reviewId};
+    return RabbitMQClient.produceReview(route);
+  }
+
+  @Get('/reviews/:reviewId/:commentId')
+  async getCommentById(
+    @Param('reviewId') 
+    reviewId: number,
+    commentId: number){
+    let routeById = {
+      "routingKey": "getComment", 
+      "reviewId": reviewId,
+      "commentId": commentId};
+    return RabbitMQClient.produceReview(routeById);
+  }
+
   @Post()
   async create(@Req() req: any, @Res() res: any) {
     return this.appService.postData(req, res);
