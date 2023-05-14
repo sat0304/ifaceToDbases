@@ -125,6 +125,7 @@ export class AppController {
   async getCommentById(
     @Param('reviewId') 
     reviewId: number,
+    @Param('commentId')
     commentId: number){
     let routeById = {
       "routingKey": "getComment", 
