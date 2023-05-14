@@ -62,7 +62,7 @@ export class AppController {
   @Get('/persons')
   async getPersons(){
     let route = {"routingKey": "getPersons"};
-    return RabbitMQClient.produceMovie(route);
+    return RabbitMQClient.producePerson(route);
   }
 
   @Get('/persons/:personKinopoiskId')
@@ -70,20 +70,20 @@ export class AppController {
     @Param('personKinopoiskId') personKinopoiskId: number){
     let routeById = {
       "routingKey": "getPerson", "personKinopoiskId": personKinopoiskId};
-    return RabbitMQClient.produceMovie(routeById);
+    return RabbitMQClient.producePerson(routeById);
   }
 
   @Get('/professions')
   async getProfessions(){
     let route = {"routingKey": "getProfessions"};
-    return RabbitMQClient.produceMovie(route);
+    return RabbitMQClient.producePerson(route);
   }
 
   @Get('/professions/:profession')
   async getProfessionByName(@Param('profession') profession: any){
     let routeByProfession = {
       "routingKey": "getProfession", "profession": profession};
-    return RabbitMQClient.produceMovie(routeByProfession);
+    return RabbitMQClient.producePerson(routeByProfession);
   }
 
   @Get('/similars')
