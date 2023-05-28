@@ -15,20 +15,29 @@ export class AppController {
   @Get('/movies/:kinopoiskId')
   async getMoviesByKinopoiskId(@Param('kinopoiskId') kinopoiskId: any){
     let routeById = {
-      "routingKey": "getMovie", "kinopoiskId": kinopoiskId};
+      "routingKey": "getMovie", 
+      "kinopoiskId": kinopoiskId};
     return RabbitMQClient.produceMovie(routeById);
   }
 
-  @Get('/details')
-  async getDetails(){
-    let route = {"routingKey": "getDetails"};
+  @Get('/movies/:kinopoiskId/details')
+  async getDetails(
+    @Param('kinopoiskId') kinopoiskId: number
+  ){
+    let route = {
+      "routingKey": "getDetails",
+      "kinopoiskId": kinopoiskId};
     return RabbitMQClient.produceMovie(route);
   }
 
-  @Get('/details/:name')
-  async getDetailByName(@Param('name') name: any){
+  @Get('/movies/:kinopoiskId/details/:name')
+  async getDetailByName(
+    @Param('kinopoiskId') kinopoiskId: number,
+    @Param('name') name: any){
     let routeByDetail = {
-      "routingKey": "getDetail", "name": name};
+      "routingKey": "getDetail",
+      "kinopoiskId": kinopoiskId,
+      "name": name};
     return RabbitMQClient.produceMovie(routeByDetail);
   }
 
