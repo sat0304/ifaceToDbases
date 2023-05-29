@@ -8,10 +8,6 @@ export class AppService {
   async postData(@Req() req: any, @Res() res: any) {
     const body = req.body;
     switch (body.routingKey) {
-      // case 'getGenre': 
-      // let resultGetGenre = await RabbitMQClient.produceMovie(body);
-      // res.send({resultGetGenre});
-      // break;
       case 'postGenre':
         let resultGenre = await RabbitMQClient.produceMovie(body);
         res.send({resultGenre});

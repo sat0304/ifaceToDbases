@@ -13,11 +13,32 @@ export class AppController {
   }
 
   @Get('/movies/:kinopoiskId')
-  async getMoviesByKinopoiskId(@Param('kinopoiskId') kinopoiskId: any){
+  async getMoviesByKinopoiskId(
+    @Param('kinopoiskId') kinopoiskId: number){
     let routeById = {
       "routingKey": "getMovie", 
-      "kinopoiskId": kinopoiskId};
+      "kinopoiskId": kinopoiskId };
     return RabbitMQClient.produceMovie(routeById);
+  }
+
+  @Get('/movies/:kinopoiskId/actors')
+  async getMovieActors(
+    @Param('kinopoiskId') kinopoiskId: number ){
+    let route = {
+      "routingKey": "getMovieActors",
+      "kinopoiskId": kinopoiskId 
+    };
+    return RabbitMQClient.produceMovie(route);
+  }
+
+  @Get('/movies/:kinopoiskId/persons')
+  async getMoviePersons(
+    @Param('kinopoiskId') kinopoiskId: number ){
+    let route = {
+      "routingKey": "getMoviePersons",
+      "kinopoiskId": kinopoiskId 
+    };
+    return RabbitMQClient.produceMovie(route);
   }
 
   @Get('/movies/:kinopoiskId/details')
@@ -50,23 +71,55 @@ export class AppController {
   @Get('/genres/:genreEng')
   async getGenreByName(@Param('genreEng') genreEng: any){
     let routeByGenre = {
-      "routingKey": "getGenre", "genreEng": genreEng};
+      "routingKey": "getGenre", 
+      "genreEng": genreEng};
     return RabbitMQClient.produceMovie(routeByGenre);
   }
 
-  @Get('/countries')
-  async getCountries(){
-    let route = {"routingKey": "getCountries"};
+  @Get('/movies/:kinopoiskId/countries')
+  async getCountries(
+    @Param('kinopoiskId') kinopoiskId: number ){
+    let route = {
+      "routingKey": "getCountries",
+      "kinopoiskId": kinopoiskId,
+  };
     return RabbitMQClient.produceMovie(route);
   }
 
-  @Get('/countries/:countryId')
-  async getCountryByName(@Param('countryId') countryId: number){
+  @Get('/movies/:kinopoiskId/countries/:countryId')
+  async getCountryByName(
+    @Param('kinopoiskId') kinopoiskId: number,
+    @Param('countryId') countryId: number){
     let routeByCountry = {
-      "routingKey": "getCountry", "countryId": countryId
+      "routingKey": "getCountry", 
+      "kinopoiskId": kinopoiskId,
+      "countryId": countryId
     };
     return RabbitMQClient.produceMovie(routeByCountry);
   }
+
+
+
+  @Get('/movies/:kinopoiskId/similars')
+  async getSimilars(
+    @Param('kinopoiskId') kinopoiskId: number ){
+    let route = {
+      "routingKey": "getSimilars",
+      "kinopoiskId": kinopoiskId };
+    return RabbitMQClient.produceMovie(route);
+  }
+
+  @Get('/movies/:kinopoiskId/similars/:similarKinopoiskId')
+  async getSimilarsByKinopoiskId(
+    @Param('similarKinopoiskId') similarKinopoiskId: number,
+    @Param('kinopoiskId') kinopoiskId: number){
+    let routeById = {
+      "routingKey": "getSimilar", 
+      "kinopoiskId": kinopoiskId,
+      "similarKinopoiskId": similarKinopoiskId};
+    return RabbitMQClient.produceMovie(routeById);
+  }
+
 
   @Get('/persons')
   async getPersons(){
@@ -93,20 +146,6 @@ export class AppController {
     let routeByProfession = {
       "routingKey": "getProfession", "profession": profession};
     return RabbitMQClient.producePerson(routeByProfession);
-  }
-
-  @Get('/similars')
-  async getSimilars(){
-    let route = {"routingKey": "getSimilars"};
-    return RabbitMQClient.produceMovie(route);
-  }
-
-  @Get('/similars/:similarKinopoiskId')
-  async getSimilarsByKinopoiskId(
-    @Param('similarKinopoiskId') similarKinopoiskId: number){
-    let routeById = {
-      "routingKey": "getSimilar", "similarKinopoiskId": similarKinopoiskId};
-    return RabbitMQClient.produceMovie(routeById);
   }
 
   @Get('/reviews')
