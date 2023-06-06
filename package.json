@@ -1,7 +1,7 @@
 {
   "name": "i-face-to-dbases",
   "version": "0.0.1",
-  "description": "",
+  "description": "Interface to movie, person, review DBs",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
