@@ -152,6 +152,7 @@ export class AppController {
     return RabbitMQClient.producePerson(route);
   }
 
+
   @ApiOperation({summary: 'To get certain person'})
   @ApiResponse({status: 200, type: String})
   @Get('/persons/:personKinopoiskId')
@@ -160,6 +161,16 @@ export class AppController {
     let routeById = {
       "routingKey": "getPerson", "personKinopoiskId": personKinopoiskId};
     return RabbitMQClient.producePerson(routeById);
+  }
+
+  @ApiOperation({summary: 'To get certain person relevant movies'})
+  @ApiResponse({status: 200, type: String})
+  @Get('/persons/:personKinopoiskId/movies')
+  async getPersonMovies(
+    @Param('personKinopoiskId') personKinopoiskId: number){
+    let routeById = {
+      "routingKey": "getPersonMovies", "personKinopoiskId": personKinopoiskId};
+    return RabbitMQClient.produceMovie(routeById);
   }
 
   @ApiOperation({summary: 'To get list of professions'})
