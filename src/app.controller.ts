@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
+import { Controller, Get, Options, Param, Post, Req, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 import RabbitMQClient from './rabbitMQ/client';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -12,18 +12,40 @@ export class AppController {
   @Get('/movies')
   async getMovies(){
     let route = {"routingKey": "getMovies"};
-    return RabbitMQClient.produceMovie(route);
+    return await RabbitMQClient.produceMovie(route);
   }
 
   @ApiOperation({summary: 'To get particular movie'})
   @ApiResponse({status: 200, type: String})
   @Get('/movies/:kinopoiskId')
-  async getMoviesByKinopoiskId(
+  async getMovieByKinopoiskId(
     @Param('kinopoiskId') kinopoiskId: number){
     let routeById = {
       "routingKey": "getMovie", 
       "kinopoiskId": kinopoiskId };
-    return RabbitMQClient.produceMovie(routeById);
+    return await RabbitMQClient.produceMovie(routeById);
+  }
+
+  @ApiOperation({summary: "To get particular movie by It's name"})
+  @ApiResponse({status: 200, type: String})
+  @Get('/movie/:movieName')
+  async getMovieByName(
+    @Param('movieName') movieName: any){
+    let routeByName = {
+      "routingKey": "getMovieName", 
+      "movieName": movieName };
+    return await RabbitMQClient.produceMovie(routeByName);
+  }
+
+  @ApiOperation({summary: "To get particular movie by It's original name"})
+  @ApiResponse({status: 200, type: String})
+  @Get('/movie/name/:originalName')
+  async getMovieByOriginamName(
+    @Param('originalName') originalName: any){
+    let routeByOriginalName = {
+      "routingKey": "getMovieOriginalName", 
+      "originalName": originalName };
+    return await RabbitMQClient.produceMovie(routeByOriginalName);
   }
 
   @ApiOperation({summary: 'To get movie cast'})
@@ -35,7 +57,7 @@ export class AppController {
       "routingKey": "getMovieActors",
       "kinopoiskId": kinopoiskId 
     };
-    return RabbitMQClient.produceMovie(route);
+    return await RabbitMQClient.produceMovie(route);
   }
 
   @ApiOperation({summary: 'To get movie makers'})
@@ -47,7 +69,7 @@ export class AppController {
       "routingKey": "getMoviePersons",
       "kinopoiskId": kinopoiskId 
     };
-    return RabbitMQClient.produceMovie(route);
+    return await RabbitMQClient.produceMovie(route);
   }
 
   @ApiOperation({summary: 'To get movie details'})
@@ -57,9 +79,9 @@ export class AppController {
     @Param('kinopoiskId') kinopoiskId: number
   ){
     let route = {
-      "routingKey": "getDetails",
+      "routingKey": "getMovieDetails",
       "kinopoiskId": kinopoiskId};
-    return RabbitMQClient.produceMovie(route);
+    return await RabbitMQClient.produceMovie(route);
   }
 
   @ApiOperation({summary: 'To get the movie particular detail like the rating'})
@@ -72,7 +94,7 @@ export class AppController {
       "routingKey": "getDetail",
       "kinopoiskId": kinopoiskId,
       "name": name};
-    return RabbitMQClient.produceMovie(routeByDetail);
+    return await RabbitMQClient.produceMovie(routeByDetail);
   }
 
   @ApiOperation({summary: 'To get genres'})
@@ -80,7 +102,7 @@ export class AppController {
   @Get('/genres')
   async getGenres(){
     let route = {"routingKey": "getGenres"};
-    return RabbitMQClient.produceMovie(route);
+    return await RabbitMQClient.produceMovie(route);
   }
 
   @ApiOperation({summary: 'To get English name of the genre'})
@@ -90,19 +112,27 @@ export class AppController {
     let routeByGenre = {
       "routingKey": "getGenre", 
       "genreEng": genreEng};
-    return RabbitMQClient.produceMovie(routeByGenre);
+    return await RabbitMQClient.produceMovie(routeByGenre);
   }
 
   @ApiOperation({summary: 'To get the movie countries of creation'})
   @ApiResponse({status: 200, type: String})
   @Get('/movies/:kinopoiskId/countries')
-  async getCountries(
+  async getMovieCountries(
     @Param('kinopoiskId') kinopoiskId: number ){
     let route = {
-      "routingKey": "getCountries",
+      "routingKey": "getMovieCountries",
       "kinopoiskId": kinopoiskId,
   };
-    return RabbitMQClient.produceMovie(route);
+    return await RabbitMQClient.produceMovie(route);
+  }
+
+  @ApiOperation({summary: 'To get all countries'})
+  @ApiResponse({status: 200, type: String})
+  @Get('/countries')
+  async getAllCountries(){
+    let route = {"routingKey": "getAllCountries"};
+    return await RabbitMQClient.produceMovie(route);
   }
 
   @ApiOperation({summary: 'To get the movie particular country'})
@@ -116,7 +146,7 @@ export class AppController {
       "kinopoiskId": kinopoiskId,
       "countryId": countryId
     };
-    return RabbitMQClient.produceMovie(routeByCountry);
+    return await RabbitMQClient.produceMovie(routeByCountry);
   }
 
   @ApiOperation({summary: 'To get the movie similars'})
@@ -125,9 +155,9 @@ export class AppController {
   async getSimilars(
     @Param('kinopoiskId') kinopoiskId: number ){
     let route = {
-      "routingKey": "getSimilars",
+      "routingKey": "getMovieSimilars",
       "kinopoiskId": kinopoiskId };
-    return RabbitMQClient.produceMovie(route);
+    return await RabbitMQClient.produceMovie(route);
   }
 
   @ApiOperation({summary: 'To get the movie particular similar'})
@@ -140,7 +170,7 @@ export class AppController {
       "routingKey": "getSimilar", 
       "kinopoiskId": kinopoiskId,
       "similarKinopoiskId": similarKinopoiskId};
-    return RabbitMQClient.produceMovie(routeById);
+    return await RabbitMQClient.produceMovie(routeById);
   }
 
 
@@ -149,7 +179,7 @@ export class AppController {
   @Get('/persons')
   async getPersons(){
     let route = {"routingKey": "getPersons"};
-    return RabbitMQClient.producePerson(route);
+    return await RabbitMQClient.producePerson(route);
   }
 
 
@@ -160,7 +190,7 @@ export class AppController {
     @Param('personKinopoiskId') personKinopoiskId: number){
     let routeById = {
       "routingKey": "getPerson", "personKinopoiskId": personKinopoiskId};
-    return RabbitMQClient.producePerson(routeById);
+    return await RabbitMQClient.producePerson(routeById);
   }
 
   @ApiOperation({summary: 'To get certain person relevant movies'})
@@ -170,7 +200,18 @@ export class AppController {
     @Param('personKinopoiskId') personKinopoiskId: number){
     let routeById = {
       "routingKey": "getPersonMovies", "personKinopoiskId": personKinopoiskId};
-    return RabbitMQClient.produceMovie(routeById);
+    return await RabbitMQClient.produceMovie(routeById);
+  }
+
+  @ApiOperation({summary: "To get person's occupations"})
+  @ApiResponse({status: 200, type: String})
+  @Get('/persons/:personKinopoiskId/professions')
+  async getPersonProfessions(
+    @Param('personKinopoiskId') personKinopoiskId: number){
+    let routeById = {
+      "routingKey": "getPersonProfessions",
+      "personKinopoiskId": personKinopoiskId};
+    return await RabbitMQClient.producePerson(routeById);
   }
 
   @ApiOperation({summary: 'To get list of professions'})
@@ -178,7 +219,7 @@ export class AppController {
   @Get('/professions')
   async getProfessions(){
     let route = {"routingKey": "getProfessions"};
-    return RabbitMQClient.producePerson(route);
+    return await RabbitMQClient.producePerson(route);
   }
 
   @ApiOperation({summary: 'To get particular profession'})
@@ -187,7 +228,7 @@ export class AppController {
   async getProfessionByName(@Param('profession') profession: any){
     let routeByProfession = {
       "routingKey": "getProfession", "profession": profession};
-    return RabbitMQClient.producePerson(routeByProfession);
+    return await RabbitMQClient.producePerson(routeByProfession);
   }
 
   @ApiOperation({summary: 'To get list of reviews'})
@@ -195,7 +236,7 @@ export class AppController {
   @Get('/reviews')
   async getReviews(){
     let route = {"routingKey": "getReviews"};
-    return RabbitMQClient.produceReview(route);
+    return await RabbitMQClient.produceReview(route);
   }
 
   @ApiOperation({summary: 'To get particular review'})
@@ -205,7 +246,7 @@ export class AppController {
     @Param('reviewId') reviewId: number){
     let routeById = {
       "routingKey": "getReview", "reviewId": reviewId};
-    return RabbitMQClient.produceReview(routeById);
+    return await RabbitMQClient.produceReview(routeById);
   }
 
   @ApiOperation({summary: 'To get the review comments'})
@@ -214,7 +255,7 @@ export class AppController {
   async getComments(
     @Param('reviewId') reviewId: number){
     let route = {"routingKey": "getComments", "reviewId": reviewId};
-    return RabbitMQClient.produceReview(route);
+    return await RabbitMQClient.produceReview(route);
   }
 
   @ApiOperation({summary: 'To get the review particular comment'})
@@ -229,14 +270,21 @@ export class AppController {
       "routingKey": "getComment", 
       "reviewId": reviewId,
       "commentId": commentId};
-    return RabbitMQClient.produceReview(routeById);
+    return await RabbitMQClient.produceReview(routeById);
   }
   
   @ApiOperation({summary: 'Create new movie, person or review'})
   @ApiResponse({status: 201, type: String})
   @Post()
   async create(@Req() req: any, @Res() res: any) {
-    return this.appService.postData(req, res);
+    return await this.appService.postData(req, res);
 
+  }
+
+  @ApiOperation({summary: 'Get list of methods'})
+  @ApiResponse({status: 200, type: String})
+  @Options()
+  async returnListMethods() {
+    return 'GET, OPTIONS, POST, PATCH';
   }
 }
