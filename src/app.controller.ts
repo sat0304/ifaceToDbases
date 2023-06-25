@@ -48,6 +48,17 @@ export class AppController {
     return await RabbitMQClient.produceMovie(routeByOriginalName);
   }
 
+  @ApiOperation({summary: "To get movies list by rate from X.X - to Y.Y"})
+  @ApiResponse({status: 200, type: String})
+  @Get('/movies/rate/:rateFromRateTo')
+  async getMoviesByRate(
+    @Param('rateFromRateTo') rateFromRateTo: any){
+    let routeMovieByRate = {
+      "routingKey": "getMoviesByRate", 
+      "rateFromRateTo": rateFromRateTo };
+    return await RabbitMQClient.produceMovie(routeMovieByRate);
+  }
+
   @ApiOperation({summary: 'To get movie cast'})
   @ApiResponse({status: 200, type: String})
   @Get('/movies/:kinopoiskId/actors')
